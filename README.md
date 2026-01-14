@@ -169,49 +169,47 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 npm run dev
 ```
 
-🌐 Deployment
+# 🚀 Project Highlights
 
-Frontend: Vercel / Netlify
+## 🌐 Deployment
+- **Frontend**: Vercel / Netlify  
+- **Backend**: Supabase Edge Functions  
+- **Version Control**: GitHub  
 
-Backend: Supabase Edge Functions
+---
 
-Version Control: GitHub
+## 🎯 Why This Project Stands Out
+- Real-world **AI-driven healthcare application**
+- End-to-end **full-stack engineering + deep learning**
+- Integrated **Explainable AI (XAI)** for model transparency
+- **Cloud-ready**, serverless, and scalable architecture
+- Strong **resume, research, and portfolio impact**
 
-🎯 Why This Project Stands Out
+---
 
-Real-world AI healthcare application
+## 🔮 Future Enhancements
+- Role-based authentication (Student / Researcher / Admin)
+- 3D molecular docking & visualization
+- SHAP-based and attention-based explainability
+- Batch protein sequence inference
+- Model versioning & performance monitoring
+- CI/CD pipeline integration
 
-Full-stack engineering + deep learning
+---
 
-Explainable AI integration
+## 👥 Team Members
 
-Cloud-ready architecture
+| Name |
+|------|
+| **Varshith Julakanti** |
+| **Likita Reddy Bojja** |
+| **Bala Arun Polishetty** |
 
-Strong resume & portfolio impact
+---
 
-🔮 Future Enhancements
+## 📜 License
+This project is intended for **academic, research, and portfolio purposes**.
 
-Role-based authentication
+---
 
-3D molecular docking visualization
-
-SHAP-based explainability
-
-Batch protein inference
-
-Model versioning & monitoring
-
-CI/CD pipeline integration
-
-👥 Team Members
-Name
-Varshith Julakanti
-Likita Reddy Bojja
-Bala Arun Polishetty
-📜 License
-
-This project is intended for academic, research, and portfolio purposes.
-
-⭐ If you find this project useful, consider starring the repository!
-
-
+⭐ *If you find this project useful, consider starring the repository!*  
