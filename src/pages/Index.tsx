@@ -7,6 +7,7 @@ import { DrugCandidate } from "@/components/DrugCandidate";
 import { ProteinAnalysis } from "@/components/ProteinAnalysis";
 import { ModelArchitecture } from "@/components/ModelArchitecture";
 import { MetricsDisplay } from "@/components/MetricsDisplay";
+import { DrugComparisonCharts } from "@/components/DrugComparisonCharts";
 import { Loader2, Sparkles, FlaskConical, Beaker, Brain, Dna, Microscope } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -170,6 +171,11 @@ const Index = () => {
             {/* Protein Analysis */}
             {results.proteinAnalysis && (
               <ProteinAnalysis analysis={results.proteinAnalysis} />
+            )}
+
+            {/* Comparison Charts */}
+            {results.drugCandidates && results.drugCandidates.length > 0 && (
+              <DrugComparisonCharts candidates={results.drugCandidates} />
             )}
 
             {/* Drug Candidates */}
