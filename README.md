@@ -160,3 +160,52 @@ VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 npm run dev
+
+\'\'\'
+
+🌐 Deployment
+
+Frontend: Vercel / Netlify
+
+Backend: Supabase Edge Functions
+
+Version Control: GitHub
+
+🎯 Why This Project Stands Out
+
+Real-world AI healthcare application
+
+Full-stack engineering + deep learning
+
+Explainable AI integration
+
+Cloud-ready architecture
+
+Strong resume & portfolio impact
+
+🔮 Future Enhancements
+
+Role-based authentication
+
+3D molecular docking visualization
+
+SHAP-based explainability
+
+Batch protein inference
+
+Model versioning & monitoring
+
+CI/CD pipeline integration
+
+👥 Team Members
+Name
+Varshith Julakanti
+Likita Reddy Bojja
+Bala Arun Polishetty
+📜 License
+
+This project is intended for academic, research, and portfolio purposes.
+
+⭐ If you find this project useful, consider starring the repository!
+
+
