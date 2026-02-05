@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Atom } from "lucide-react";
 
 interface MoleculeStructureProps {
   smiles: string;
@@ -9,6 +8,23 @@ interface MoleculeStructureProps {
   height?: number;
   className?: string;
 }
+
+// Clean SMILES string to fix common issues
+const cleanSmiles = (smiles: string): string => {
+  if (!smiles) return "";
+  
+  // Remove any whitespace
+  let cleaned = smiles.trim();
+  
+  // Fix common OCR/formatting issues
+  // Replace 0 (zero) with O (oxygen) in common patterns
+  cleaned = cleaned.replace(/0C/g, 'OC');
+  cleaned = cleaned.replace(/C0/g, 'CO');
+  cleaned = cleaned.replace(/10/g, '1O');
+  cleaned = cleaned.replace(/01/g, 'O1');
+  
+  return cleaned;
+};
 
 export const MoleculeStructure = ({ 
   smiles, 
@@ -20,6 +36,7 @@ export const MoleculeStructure = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [SmilesDrawer, setSmilesDrawer] = useState<any>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     // Dynamically load SmilesDrawer from CDN
@@ -62,6 +79,8 @@ export const MoleculeStructure = ({
     setError(null);
 
     try {
+      const cleanedSmiles = cleanSmiles(smiles);
+      
       const options = {
         width: width,
         height: height,
@@ -101,28 +120,58 @@ export const MoleculeStructure = ({
 
       const drawer = new SmilesDrawer.SmiDrawer(options);
       
-      SmilesDrawer.parse(smiles, (tree: any) => {
-        drawer.draw(tree, canvasRef.current, 'dark');
-        setIsLoading(false);
-      }, () => {
-        setError("Invalid SMILES notation");
-        setIsLoading(false);
+      SmilesDrawer.parse(cleanedSmiles, (tree: any) => {
+        try {
+          drawer.draw(tree, canvasRef.current, 'dark');
+          setIsLoading(false);
+          setError(null);
+        } catch (drawErr) {
+          console.warn("Draw error for SMILES:", cleanedSmiles, drawErr);
+          setError("Could not render structure");
+          setIsLoading(false);
+        }
+      }, (parseErr: any) => {
+        console.warn("Parse error for SMILES:", cleanedSmiles, parseErr);
+        // Try original smiles if cleaned one fails
+        if (retryCount === 0 && cleanedSmiles !== smiles) {
+          setRetryCount(1);
+          SmilesDrawer.parse(smiles, (tree: any) => {
+            try {
+              drawer.draw(tree, canvasRef.current, 'dark');
+              setIsLoading(false);
+              setError(null);
+            } catch {
+              setError("Invalid molecular structure");
+              setIsLoading(false);
+            }
+          }, () => {
+            setError("Invalid SMILES notation");
+            setIsLoading(false);
+          });
+        } else {
+          setError("Invalid SMILES notation");
+          setIsLoading(false);
+        }
       });
     } catch (err) {
+      console.warn("Render error:", err);
       setError("Failed to render molecule");
       setIsLoading(false);
     }
-  }, [SmilesDrawer, smiles, width, height]);
+  }, [SmilesDrawer, smiles, width, height, retryCount]);
 
   if (error) {
     return (
       <div 
-        className={`flex items-center justify-center bg-secondary/30 rounded-lg ${className}`}
+        className={`flex flex-col items-center justify-center bg-secondary/30 rounded-lg ${className}`}
         style={{ width, height }}
       >
-        <div className="text-center text-muted-foreground text-xs">
-          <AlertCircle className="w-6 h-6 mx-auto mb-1 text-destructive/50" />
-          <p>{error}</p>
+        <div className="text-center text-muted-foreground text-xs p-4">
+          <Atom className="w-10 h-10 mx-auto mb-2 text-primary/40 animate-pulse" />
+          <p className="font-medium text-foreground/70 mb-1">Structure Unavailable</p>
+          <p className="text-[10px] opacity-70 max-w-[200px]">
+            SMILES: {smiles?.substring(0, 30)}...
+          </p>
         </div>
       </div>
     );
@@ -131,10 +180,15 @@ export const MoleculeStructure = ({
   return (
     <div className={`relative ${className}`}>
       {isLoading && (
-        <Skeleton 
-          className="absolute inset-0 rounded-lg" 
+        <div 
+          className="absolute inset-0 flex items-center justify-center bg-secondary/30 rounded-lg"
           style={{ width, height }}
-        />
+        >
+          <div className="text-center">
+            <Atom className="w-8 h-8 mx-auto mb-2 text-primary animate-spin" />
+            <p className="text-xs text-muted-foreground">Rendering...</p>
+          </div>
+        </div>
       )}
       <canvas
         ref={canvasRef}
