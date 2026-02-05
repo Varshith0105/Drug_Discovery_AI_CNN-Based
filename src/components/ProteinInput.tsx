@@ -6,7 +6,7 @@ interface ProteinInputProps {
   onChange: (value: string) => void;
   disabled?: boolean;
 }
-
+ 
 export const ProteinInput = ({ value, onChange, disabled }: ProteinInputProps) => {
   return (
     <div className="space-y-3">
