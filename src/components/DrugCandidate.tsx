@@ -1,9 +1,6 @@
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { MoleculeStructure } from "@/components/MoleculeStructure";
-import { ChevronDown, ChevronUp, Atom, FlaskConical } from "lucide-react";
+import { FlaskConical } from "lucide-react";
 
 interface DrugCandidateData {
   name: string;
@@ -25,7 +22,6 @@ interface DrugCandidateProps {
 }
 
 export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
-  const [showStructure, setShowStructure] = useState(true);
 
   const getAffinityColor = (affinity: number) => {
     if (affinity >= 8) return "text-green-400";
@@ -84,31 +80,6 @@ export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
           </div>
         </div>
 
-        {/* Molecular Structure */}
-        <div className="border border-border rounded-lg overflow-hidden bg-secondary/20">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full flex items-center justify-between px-4 py-2 hover:bg-secondary/30"
-            onClick={() => setShowStructure(!showStructure)}
-          >
-            <span className="flex items-center gap-2 text-sm font-medium">
-              <Atom className="w-4 h-4 text-primary" />
-              2D Molecular Structure
-            </span>
-            {showStructure ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </Button>
-          
-          {showStructure && (
-            <div className="p-4 flex justify-center animate-in fade-in duration-200">
-              <MoleculeStructure 
-                smiles={candidate.smiles} 
-                width={280} 
-                height={180}
-              />
-            </div>
-          )}
-        </div>
 
         {/* SMILES and Mechanism */}
         <div className="space-y-2">
