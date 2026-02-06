@@ -154,17 +154,17 @@ Interactive UI Visualization
 git clone https://github.com/your-username/drug-discovery-platform.git
 cd drug-discovery-platform
 ```
-###2️⃣ Install Dependencies
+2️⃣ Install Dependencies
 ```bash
 npm install
 ```
-###3️⃣ Configure Environment Variables
+3️⃣ Configure Environment Variables
 Create a .env file in the root directory and add:
 ```bash
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
-###4️⃣ Run Development Server
+4️⃣ Run Development Server
 ```bash
 npm run dev
 ```
