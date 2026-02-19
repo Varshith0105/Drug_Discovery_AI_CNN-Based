@@ -174,12 +174,12 @@ const Index = () => {
             )}
 
             {/* Comparison Charts */}
-            {results.drugCandidates && results.drugCandidates.length > 0 && (
+            {results.drugCandidates && Array.isArray(results.drugCandidates) && results.drugCandidates.length > 0 && (
               <DrugComparisonCharts candidates={results.drugCandidates} />
             )}
 
             {/* Drug Candidates */}
-            {results.drugCandidates && results.drugCandidates.length > 0 && (
+            {results.drugCandidates && Array.isArray(results.drugCandidates) && results.drugCandidates.length > 0 && (
               <div>
                 <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
                   <Sparkles className="w-6 h-6 text-primary" />

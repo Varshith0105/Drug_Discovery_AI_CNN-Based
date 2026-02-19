@@ -39,36 +39,45 @@ interface DrugComparisonChartsProps {
 const COLORS = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
 
 export const DrugComparisonCharts = ({ candidates }: DrugComparisonChartsProps) => {
+  const safe = (val: any, fallback = 0): number => {
+    const n = Number(val);
+    return isNaN(n) ? fallback : n;
+  };
+
   // Prepare data for binding affinity chart
   const affinityData = candidates.map((c, i) => ({
     name: `Candidate ${i + 1}`,
-    fullName: c.name,
-    affinity: c.bindingAffinity,
-    confidence: c.confidence * 100
+    fullName: c.name || `Candidate ${i + 1}`,
+    affinity: safe(c.bindingAffinity),
+    confidence: safe(c.confidence) * 100
   }));
 
   // Prepare data for molecular properties comparison
-  const propertiesData = candidates.map((c, i) => ({
-    name: `C${i + 1}`,
-    fullName: c.name,
-    MW: Math.min(c.properties.molecularWeight / 100, 5), // Normalize to 0-5 scale
-    LogP: Math.min(Math.max(c.properties.logP, 0), 5),
-    HBD: c.properties.hbd,
-    HBA: Math.min(c.properties.hba / 2, 5), // Normalize
-    Affinity: c.bindingAffinity / 2 // Normalize to 0-5 scale
-  }));
+  const propertiesData = candidates.map((c, i) => {
+    const p = c.properties || {} as any;
+    return {
+      name: `C${i + 1}`,
+      fullName: c.name || `Candidate ${i + 1}`,
+      MW: Math.min(safe(p.molecularWeight) / 100, 5),
+      LogP: Math.min(Math.max(safe(p.logP), 0), 5),
+      HBD: safe(p.hbd),
+      HBA: Math.min(safe(p.hba) / 2, 5),
+      Affinity: safe(c.bindingAffinity) / 2
+    };
+  });
 
   // Prepare data for Lipinski's Rule of Five compliance
   const lipinskiData = candidates.map((c, i) => {
-    const mwPass = c.properties.molecularWeight <= 500;
-    const logPPass = c.properties.logP <= 5;
-    const hbdPass = c.properties.hbd <= 5;
-    const hbaPass = c.properties.hba <= 10;
+    const p = c.properties || {} as any;
+    const mwPass = safe(p.molecularWeight) <= 500;
+    const logPPass = safe(p.logP) <= 5;
+    const hbdPass = safe(p.hbd) <= 5;
+    const hbaPass = safe(p.hba) <= 10;
     const violations = [mwPass, logPPass, hbdPass, hbaPass].filter(x => !x).length;
     
     return {
       name: `Candidate ${i + 1}`,
-      fullName: c.name,
+      fullName: c.name || `Candidate ${i + 1}`,
       violations,
       score: 4 - violations,
       mwPass,
@@ -80,12 +89,17 @@ export const DrugComparisonCharts = ({ candidates }: DrugComparisonChartsProps) 
 
   // Radar chart data
   const radarData = [
-    { property: 'MW', fullName: 'Molecular Weight', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, Math.min(c.properties.molecularWeight / 100, 5)])) },
-    { property: 'LogP', fullName: 'Lipophilicity', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, Math.min(Math.max(c.properties.logP + 1, 0), 5)])) },
-    { property: 'HBD', fullName: 'H-Bond Donors', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, c.properties.hbd])) },
-    { property: 'HBA', fullName: 'H-Bond Acceptors', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, Math.min(c.properties.hba / 2, 5)])) },
-    { property: 'pIC50', fullName: 'Binding Affinity', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, c.bindingAffinity / 2])) },
+    { property: 'MW', fullName: 'Molecular Weight', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, Math.min(safe((c.properties || {} as any).molecularWeight) / 100, 5)])) },
+    { property: 'LogP', fullName: 'Lipophilicity', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, Math.min(Math.max(safe((c.properties || {} as any).logP) + 1, 0), 5)])) },
+    { property: 'HBD', fullName: 'H-Bond Donors', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, safe((c.properties || {} as any).hbd)])) },
+    { property: 'HBA', fullName: 'H-Bond Acceptors', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, Math.min(safe((c.properties || {} as any).hba) / 2, 5)])) },
+    { property: 'pIC50', fullName: 'Binding Affinity', ...Object.fromEntries(candidates.map((c, i) => [`C${i + 1}`, safe(c.bindingAffinity) / 2])) },
   ];
+
+  const safeNum = (val: any, fallback = 0): number => {
+    const n = Number(val);
+    return isNaN(n) ? fallback : n;
+  };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -95,7 +109,7 @@ export const DrugComparisonCharts = ({ candidates }: DrugComparisonChartsProps) 
           {payload.map((entry: any, index: number) => (
             <p key={index} className="text-xs text-muted-foreground">
               <span style={{ color: entry.color }}>{entry.name}: </span>
-              {entry.value.toFixed(2)}
+              {safeNum(entry.value).toFixed(2)}
             </p>
           ))}
         </div>

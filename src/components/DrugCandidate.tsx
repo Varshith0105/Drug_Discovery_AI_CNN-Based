@@ -23,6 +23,19 @@ interface DrugCandidateProps {
 
 export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
 
+  const safeNum = (val: any, fallback = 0): number => {
+    const n = Number(val);
+    return isNaN(n) ? fallback : n;
+  };
+
+  const affinity = safeNum(candidate.bindingAffinity);
+  const confidence = safeNum(candidate.confidence);
+  const props = candidate.properties || {} as any;
+  const mw = safeNum(props.molecularWeight);
+  const logP = safeNum(props.logP);
+  const hbd = safeNum(props.hbd);
+  const hba = safeNum(props.hba);
+
   const getAffinityColor = (affinity: number) => {
     if (affinity >= 8) return "text-green-400";
     if (affinity >= 6.5) return "text-yellow-400";
@@ -37,10 +50,10 @@ export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
 
   // Check Lipinski's Rule of Five
   const lipinskiViolations = [
-    candidate.properties.molecularWeight > 500,
-    candidate.properties.logP > 5,
-    candidate.properties.hbd > 5,
-    candidate.properties.hba > 10
+    mw > 500,
+    logP > 5,
+    hbd > 5,
+    hba > 10
   ].filter(Boolean).length;
 
   return (
@@ -56,8 +69,8 @@ export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
               </h3>
             </div>
             <div className="flex items-center gap-2">
-              <Badge className={`${getConfidenceColor(candidate.confidence)}`}>
-                {(candidate.confidence * 100).toFixed(1)}% Confidence
+              <Badge className={`${getConfidenceColor(confidence)}`}>
+                {(confidence * 100).toFixed(1)}% Confidence
               </Badge>
               <Badge 
                 className={
@@ -73,8 +86,8 @@ export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
             </div>
           </div>
           <div className="text-right">
-            <div className={`text-2xl font-bold ${getAffinityColor(candidate.bindingAffinity)}`}>
-              {candidate.bindingAffinity.toFixed(1)}
+            <div className={`text-2xl font-bold ${getAffinityColor(affinity)}`}>
+              {affinity.toFixed(1)}
             </div>
             <div className="text-xs text-muted-foreground">pIC50</div>
           </div>
@@ -102,10 +115,10 @@ export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
             <div className="text-xs text-muted-foreground">Molecular Weight</div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-foreground">
-                {candidate.properties.molecularWeight.toFixed(2)} Da
+                {mw.toFixed(2)} Da
               </span>
-              {candidate.properties.molecularWeight > 500 && (
-                <span className="text-xs text-red-400">(&gt;500)</span>
+              {mw > 500 && (
+                <span className="text-xs text-destructive">(&gt;500)</span>
               )}
             </div>
           </div>
@@ -113,10 +126,10 @@ export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
             <div className="text-xs text-muted-foreground">LogP (Lipophilicity)</div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-foreground">
-                {candidate.properties.logP.toFixed(2)}
+                {logP.toFixed(2)}
               </span>
-              {candidate.properties.logP > 5 && (
-                <span className="text-xs text-red-400">(&gt;5)</span>
+              {logP > 5 && (
+                <span className="text-xs text-destructive">(&gt;5)</span>
               )}
             </div>
           </div>
@@ -124,10 +137,10 @@ export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
             <div className="text-xs text-muted-foreground">H-Bond Donors</div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-foreground">
-                {candidate.properties.hbd}
+                {hbd}
               </span>
-              {candidate.properties.hbd > 5 && (
-                <span className="text-xs text-red-400">(&gt;5)</span>
+              {hbd > 5 && (
+                <span className="text-xs text-destructive">(&gt;5)</span>
               )}
             </div>
           </div>
@@ -135,10 +148,10 @@ export const DrugCandidate = ({ candidate, index }: DrugCandidateProps) => {
             <div className="text-xs text-muted-foreground">H-Bond Acceptors</div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-foreground">
-                {candidate.properties.hba}
+                {hba}
               </span>
-              {candidate.properties.hba > 10 && (
-                <span className="text-xs text-red-400">(&gt;10)</span>
+              {hba > 10 && (
+                <span className="text-xs text-destructive">(&gt;10)</span>
               )}
             </div>
           </div>
