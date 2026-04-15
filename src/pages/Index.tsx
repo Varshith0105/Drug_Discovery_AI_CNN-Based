@@ -54,9 +54,10 @@ const Index = () => {
       });
     } catch (error: any) {
       console.error('Analysis error:', error);
+      const msg = error?.message || error?.error || "Failed to analyze protein sequence";
       toast({
         title: "Analysis Failed",
-        description: error.message || "Failed to analyze protein sequence",
+        description: String(msg),
         variant: "destructive",
       });
     } finally {
