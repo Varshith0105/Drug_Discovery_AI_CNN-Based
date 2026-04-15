@@ -39,6 +39,7 @@ interface DrugComparisonChartsProps {
 const COLORS = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
 
 export const DrugComparisonCharts = ({ candidates }: DrugComparisonChartsProps) => {
+  if (!candidates || !Array.isArray(candidates) || candidates.length === 0) return null;
   const safe = (val: any, fallback = 0): number => {
     const n = Number(val);
     return isNaN(n) ? fallback : n;
